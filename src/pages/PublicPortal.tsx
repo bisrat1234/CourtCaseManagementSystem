@@ -4,12 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scale, Search, FileText, Bell, Shield, Calendar, AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react';
-import { mockCases } from '@/data/mockData';
+import { useCases } from '@/contexts/CasesContext';
 import { CourtCase } from '@/types/court';
 import { StatusBadge } from '@/components/StatusBadge';
 import { format } from 'date-fns';
+import { useSettings } from '@/contexts/SettingsContext';
 
 const PublicPortal = () => {
+  const { settings } = useSettings();
+  const { cases } = useCases();
   const [caseNumber, setCaseNumber] = useState('');
   const [searchResult, setSearchResult] = useState<CourtCase | null>(null);
   const [searched, setSearched] = useState(false);
@@ -22,7 +25,7 @@ const PublicPortal = () => {
 
     // Simulate search delay
     setTimeout(() => {
-      const foundCase = mockCases.find(
+      const foundCase = cases.find(
         c => c.caseNumber.toLowerCase() === caseNumber.toLowerCase()
       );
       setSearchResult(foundCase || null);
@@ -60,7 +63,7 @@ const PublicPortal = () => {
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-serif font-bold mb-2">
-                East Gojjam High Court
+                {settings.courtName}
               </h1>
               <p className="text-lg text-primary-foreground/80">
                 Court Case Tracking System - Public Portal
@@ -72,6 +75,23 @@ const PublicPortal = () => {
           </div>
         </div>
       </header>
+
+      {/* Announcement Section */}
+      {settings.announcement && (
+        <section className="container mx-auto px-4 py-6">
+          <Card className="border-l-4 border-l-blue-500 bg-blue-50">
+            <CardContent className="pt-4">
+              <div className="flex items-start gap-3">
+                <Bell className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-blue-900 mb-1">Court Announcement</h3>
+                  <p className="text-blue-800 text-sm">{settings.announcement}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       {/* Search Section */}
       <section className="container mx-auto px-4 -mt-8 relative z-10">
@@ -233,7 +253,7 @@ const PublicPortal = () => {
 
       {/* Info Cards */}
       <section className="container mx-auto px-4 pb-16">
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           <Card className="border-l-4 border-l-accent">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-serif flex items-center gap-2">
@@ -267,6 +287,25 @@ const PublicPortal = () => {
               </Link>
             </CardContent>
           </Card>
+
+          <Card className="border-l-4 border-l-secondary">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-serif flex items-center gap-2">
+                <FileText className="h-5 w-5 text-secondary" />
+                About System
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Learn more about the complete court case management system and its features.
+              </p>
+              <Link to="/about">
+                <Button variant="outline" size="sm">
+                  Learn More →
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -275,10 +314,16 @@ const PublicPortal = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Scale className="h-5 w-5 text-primary" />
-            <span className="font-serif font-semibold">East Gojjam High Court</span>
+            <span className="font-serif font-semibold">{settings.courtName}</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Debre Markos, Amhara Region, Ethiopia
+            {settings.address}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Phone: {settings.phone} | Email: {settings.email}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Working Hours: {settings.workingHours}
           </p>
           <p className="text-xs text-muted-foreground mt-4">
             © 2025 Court Case Tracking System. All rights reserved.

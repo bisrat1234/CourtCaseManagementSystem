@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bell, LogOut, User, Menu } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,6 +38,10 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     navigate('/login');
   };
 
+  const handleProfile = () => {
+    navigate('/profile');
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -59,7 +62,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               onClick={onMenuClick}
               className="lg:hidden"
             >
-              <Menu className="h-5 w-5" />
+              ☰
             </Button>
           )}
           <h1 className="text-xl font-serif font-bold text-foreground">{title}</h1>
@@ -68,7 +71,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <div className="flex items-center gap-3">
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
+            🔔
             <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-accent text-accent-foreground">
               2
             </Badge>
@@ -92,14 +95,12 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                Profile
+              <DropdownMenuItem onClick={handleProfile}>
+                👤 Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
+                🚪 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

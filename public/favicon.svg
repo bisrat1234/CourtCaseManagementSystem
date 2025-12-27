@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" fill="#1e40af"/>
+  <g fill="white">
+    <!-- Scales of Justice -->
+    <rect x="15" y="4" width="2" height="20"/>
+    <!-- Left scale -->
+    <circle cx="10" cy="12" r="3" fill="none" stroke="white" stroke-width="1"/>
+    <line x1="7" y1="12" x2="13" y2="12" stroke="white" stroke-width="1"/>
+    <line x1="10" y1="9" x2="16" y2="7" stroke="white" stroke-width="1"/>
+    <!-- Right scale -->
+    <circle cx="22" cy="12" r="3" fill="none" stroke="white" stroke-width="1"/>
+    <line x1="19" y1="12" x2="25" y2="12" stroke="white" stroke-width="1"/>
+    <line x1="22" y1="9" x2="16" y2="7" stroke="white" stroke-width="1"/>
+    <!-- Base -->
+    <rect x="12" y="24" width="8" height="2"/>
+    <rect x="10" y="26" width="12" height="2"/>
+  </g>
+</svg>

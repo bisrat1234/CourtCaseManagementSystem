@@ -2,8 +2,8 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/StatusBadge';
-import { mockCases } from '@/data/mockData';
-import { Clock, CheckCircle2, XCircle, Calendar } from 'lucide-react';
+import { useCases } from '@/contexts/CasesContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
@@ -13,19 +13,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 
 const CaseReview = () => {
   const { toast } = useToast();
-  const [cases, setCases] = useState(mockCases.filter(c => c.status === 'pending'));
+  const { user } = useAuth();
+  const { getCasesByStatus, assignJudgeToCase, updateCase } = useCases();
   const [acceptDialog, setAcceptDialog] = useState<string | null>(null);
   const [summonDate, setSummonDate] = useState('');
 
+  const pendingCases = getCasesByStatus('pending');
+
   const handleAccept = (caseId: string) => {
-    setCases(prev => prev.filter(c => c.id !== caseId));
+    if (user) {
+      assignJudgeToCase(caseId, user.id, user.fullName);
+      updateCase(caseId, {
+        summonDate: new Date(summonDate),
+        status: 'open'
+      });
+    }
     setAcceptDialog(null);
-    toast({ title: 'Case Accepted', description: 'The case has been opened and summon date set.' });
+    setSummonDate('');
+    toast({ 
+      title: 'Case Accepted', 
+      description: 'The case has been assigned to you and summon date set.' 
+    });
   };
 
   const handleDecline = (caseId: string) => {
-    setCases(prev => prev.filter(c => c.id !== caseId));
-    toast({ title: 'Case Declined', description: 'The plaintiff has been notified.' });
+    updateCase(caseId, { status: 'declined' });
+    toast({ 
+      title: 'Case Declined', 
+      description: 'The case has been declined and will be reassigned.' 
+    });
   };
 
   return (
@@ -36,11 +52,11 @@ const CaseReview = () => {
           <p className="text-muted-foreground">Review and decide on newly submitted cases</p>
         </div>
 
-        {cases.length === 0 ? (
+        {pendingCases.length === 0 ? (
           <Card><CardContent className="py-12 text-center text-muted-foreground">No pending cases to review</CardContent></Card>
         ) : (
           <div className="space-y-4">
-            {cases.map((courtCase) => (
+            {pendingCases.map((courtCase) => (
               <Card key={courtCase.id} className="border-l-4 border-l-status-pending">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
@@ -61,10 +77,10 @@ const CaseReview = () => {
                   </div>
                   <div className="flex gap-3 pt-4 border-t">
                     <Button onClick={() => setAcceptDialog(courtCase.id)} className="bg-status-open hover:bg-status-open/90">
-                      <CheckCircle2 className="h-4 w-4 mr-2" />Accept Case
+                      ✅ Accept Case
                     </Button>
                     <Button variant="destructive" onClick={() => handleDecline(courtCase.id)}>
-                      <XCircle className="h-4 w-4 mr-2" />Decline
+                      ❌ Decline
                     </Button>
                   </div>
                 </CardContent>

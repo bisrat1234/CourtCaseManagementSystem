@@ -1,10 +1,6 @@
-import { ReactNode } from 'react';
-import { LucideIcon } from 'lucide-react';
-
 interface StatCardProps {
   title: string;
   value: string | number;
-  icon: LucideIcon;
   description?: string;
   trend?: {
     value: number;
@@ -16,7 +12,6 @@ interface StatCardProps {
 export const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
-  icon: Icon,
   description,
   trend,
   className = '',
@@ -38,7 +33,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           )}
         </div>
         <div className="p-3 rounded-lg bg-primary/10">
-          <Icon className="h-6 w-6 text-primary" />
+          <div className="h-6 w-6 bg-primary rounded" />
         </div>
       </div>
     </div>

@@ -12,18 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FileText, User, Scale, CheckCircle2 } from 'lucide-react';
 import { CaseType, CourtCase } from '@/types/court';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCases } from '@/contexts/CasesContext';
 import { useToast } from '@/hooks/use-toast';
 import { mockUsers } from '@/data/mockData';
 
 const CaseRegistration = () => {
   const { user } = useAuth();
+  const { addCase } = useCases();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [newCaseNumber, setNewCaseNumber] = useState('');
+  const [newCase, setNewCase] = useState<CourtCase | null>(null);
 
   const [formData, setFormData] = useState({
     caseType: '' as CaseType,
@@ -53,21 +54,26 @@ const CaseRegistration = () => {
 
     // Simulate API call
     setTimeout(() => {
-      const caseNumber = generateCaseNumber();
-      setNewCaseNumber(caseNumber);
+      const registeredCase = addCase({
+        ...formData,
+        registrarId: user?.id,
+        registrarName: user?.fullName
+      });
+      
+      setNewCase(registeredCase);
       setIsSuccess(true);
       setIsSubmitting(false);
       
       toast({
         title: 'Case Registered Successfully',
-        description: `Case number ${caseNumber} has been created.`,
+        description: `Case number ${registeredCase.caseNumber} has been created and is pending judge assignment.`,
       });
     }, 1500);
   };
 
   const handleReset = () => {
     setIsSuccess(false);
-    setNewCaseNumber('');
+    setNewCase(null);
     setFormData({
       caseType: '' as CaseType,
       title: '',
@@ -90,7 +96,7 @@ const CaseRegistration = () => {
           <Card className="animate-scale-in">
             <CardContent className="pt-12 pb-10 text-center">
               <div className="w-20 h-20 rounded-full bg-status-open/20 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="h-10 w-10 text-status-open" />
+                ✅
               </div>
               <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
                 Case Registered Successfully!
@@ -100,7 +106,8 @@ const CaseRegistration = () => {
               </p>
               <div className="p-4 bg-muted rounded-lg mb-8">
                 <p className="text-sm text-muted-foreground">Case Number</p>
-                <p className="text-2xl font-mono font-bold text-primary">{newCaseNumber}</p>
+                <p className="text-2xl font-mono font-bold text-primary">{newCase?.caseNumber}</p>
+                <p className="text-xs text-muted-foreground mt-2">Status: Pending Judge Assignment</p>
               </div>
               <div className="flex gap-4 justify-center">
                 <Button onClick={handleReset}>
@@ -132,8 +139,7 @@ const CaseRegistration = () => {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg font-serif flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                Case Information
+                📄 Case Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -186,8 +192,7 @@ const CaseRegistration = () => {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg font-serif flex items-center gap-2">
-                <User className="h-5 w-5 text-primary" />
-                Plaintiff Information
+                👤 Plaintiff Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -242,8 +247,7 @@ const CaseRegistration = () => {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg font-serif flex items-center gap-2">
-                <Scale className="h-5 w-5 text-primary" />
-                Defendant Information
+                ⚖️ Defendant Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

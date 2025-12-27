@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Scale, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Login = () => {
@@ -49,7 +48,7 @@ const Login = () => {
       <div className="bg-primary text-primary-foreground py-8 px-4">
         <div className="container mx-auto flex items-center justify-center gap-4">
           <div className="p-3 rounded-xl bg-accent">
-            <Scale className="h-8 w-8 text-accent-foreground" />
+            <div className="h-8 w-8 bg-accent-foreground rounded" />
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-serif font-bold">East Gojjam High Court</h1>
@@ -71,8 +70,7 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                  <AlertCircle className="h-4 w-4" />
-                  {error}
+                  ⚠️ {error}
                 </div>
               )}
 
@@ -108,11 +106,7 @@ const Login = () => {
                     className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                    {showPassword ? '🙈' : '👁️'}
                   </Button>
                 </div>
               </div>

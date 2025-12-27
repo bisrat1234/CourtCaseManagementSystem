@@ -2,21 +2,39 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { StatCard } from '@/components/StatCard';
 import { CaseCard } from '@/components/CaseCard';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockCases, mockHearings, getDashboardStats } from '@/data/mockData';
-import { FileText, FolderOpen, CheckCircle2, Clock, Calendar, Users } from 'lucide-react';
+import { useCases } from '@/contexts/CasesContext';
+import { mockHearings } from '@/data/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const stats = getDashboardStats(user?.role || '', user?.id);
+  const { cases, getCasesByJudge, getCasesByStatus } = useCases();
+
+  // Calculate stats based on current cases
+  const getStats = () => {
+    let relevantCases = cases;
+    
+    if (user?.role === 'judge') {
+      relevantCases = getCasesByJudge(user.id);
+    }
+    
+    return {
+      totalCases: relevantCases.length,
+      pendingCases: getCasesByStatus('pending').length,
+      openCases: getCasesByStatus('open').length,
+      closedCases: getCasesByStatus('closed').length
+    };
+  };
+
+  const stats = getStats();
 
   // Get cases based on role
   const getRelevantCases = () => {
     if (user?.role === 'judge') {
-      return mockCases.filter(c => c.assignedJudgeId === user.id).slice(0, 4);
+      return getCasesByJudge(user.id).slice(0, 4);
     }
-    return mockCases.slice(0, 4);
+    return cases.slice(0, 4);
   };
 
   const upcomingHearings = mockHearings
@@ -24,7 +42,7 @@ const Dashboard = () => {
     .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
     .slice(0, 5);
 
-  const pendingCases = mockCases.filter(c => c.status === 'pending').slice(0, 3);
+  const pendingCases = getCasesByStatus('pending').slice(0, 3);
 
   const getRoleTitle = () => {
     switch (user?.role) {
@@ -59,25 +77,21 @@ const Dashboard = () => {
           <StatCard
             title="Total Cases"
             value={stats.totalCases}
-            icon={FileText}
             description="All registered cases"
           />
           <StatCard
             title="Pending Review"
             value={stats.pendingCases}
-            icon={Clock}
             description="Awaiting judge decision"
           />
           <StatCard
             title="Open Cases"
             value={stats.openCases}
-            icon={FolderOpen}
             description="Active proceedings"
           />
           <StatCard
             title="Closed Cases"
             value={stats.closedCases}
-            icon={CheckCircle2}
             description="Resolved cases"
           />
         </div>
@@ -89,8 +103,7 @@ const Dashboard = () => {
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-serif flex items-center gap-2">
-                  <FolderOpen className="h-5 w-5 text-primary" />
-                  Recent Cases
+                  📁 Recent Cases
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -113,8 +126,7 @@ const Dashboard = () => {
             <Card className="animate-slide-in-right">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-serif flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-accent" />
-                  Upcoming Hearings
+                  📅 Upcoming Hearings
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -132,8 +144,7 @@ const Dashboard = () => {
                           {hearing.description}
                         </p>
                         <div className="flex items-center gap-1.5 mt-2 text-xs text-foreground">
-                          <Calendar className="h-3.5 w-3.5" />
-                          {format(new Date(hearing.scheduledDate), 'MMM dd, yyyy • HH:mm')}
+                          📅 {format(new Date(hearing.scheduledDate), 'MMM dd, yyyy • HH:mm')}
                         </div>
                       </div>
                     ))}
@@ -151,8 +162,7 @@ const Dashboard = () => {
               <Card className="animate-slide-in-right border-l-4 border-l-status-pending">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg font-serif flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-status-pending" />
-                    Pending Review
+                    ⏰ Pending Review
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -183,13 +193,12 @@ const Dashboard = () => {
               <Card className="animate-slide-in-right">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg font-serif flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" />
-                    System Users
+                    👥 System Users
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl font-bold font-serif text-foreground">
-                    {stats.totalUsers}
+                    {cases.length}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Active system users

@@ -31,7 +31,6 @@ import {
 import { Label } from '@/components/ui/label';
 import { mockUsers } from '@/data/mockData';
 import { User, UserRole } from '@/types/court';
-import { Users, Plus, Search, Edit2, UserCheck, UserX } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 
@@ -144,8 +143,7 @@ const UserManagement = () => {
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={() => { resetForm(); }}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create User
+                ➕ Create User
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -216,7 +214,7 @@ const UserManagement = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              🔍
               <Input
                 placeholder="Search users by name, username, or email..."
                 className="pl-10"
@@ -231,8 +229,7 @@ const UserManagement = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg font-serif flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              System Users ({filteredUsers.length})
+              👥 System Users ({filteredUsers.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -275,7 +272,7 @@ const UserManagement = () => {
                                 size="icon"
                                 onClick={() => openEditDialog(user)}
                               >
-                                <Edit2 className="h-4 w-4" />
+                                ✏️
                               </Button>
                             </DialogTrigger>
                             <DialogContent>
@@ -335,11 +332,7 @@ const UserManagement = () => {
                             size="icon"
                             onClick={() => toggleUserStatus(user.id)}
                           >
-                            {user.status === 'active' ? (
-                              <UserX className="h-4 w-4 text-destructive" />
-                            ) : (
-                              <UserCheck className="h-4 w-4 text-status-open" />
-                            )}
+                            {user.status === 'active' ? '❌' : '✅'}
                           </Button>
                         </div>
                       </TableCell>

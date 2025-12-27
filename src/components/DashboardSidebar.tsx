@@ -1,25 +1,25 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { LucideIcon, Scale, LayoutDashboard, Users, FileText, FolderOpen, Calendar, Settings, Search, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import { Button } from '@/components/ui/button';
 
 interface NavItem {
   label: string;
   href: string;
-  icon: LucideIcon;
   roles: string[];
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'judge', 'registrar', 'clerk'] },
-  { label: 'User Management', href: '/users', icon: Users, roles: ['admin'] },
-  { label: 'Register Case', href: '/register-case', icon: FileText, roles: ['registrar'] },
-  { label: 'Case Review', href: '/case-review', icon: FolderOpen, roles: ['judge'] },
-  { label: 'Case Management', href: '/case-management', icon: FolderOpen, roles: ['judge', 'clerk'] },
-  { label: 'All Cases', href: '/cases', icon: Search, roles: ['admin', 'registrar', 'judge', 'clerk'] },
-  { label: 'Hearings', href: '/hearings', icon: Calendar, roles: ['judge', 'clerk'] },
-  { label: 'Settings', href: '/settings', icon: Settings, roles: ['admin'] },
+  { label: 'Dashboard', href: '/dashboard', roles: ['admin', 'judge', 'registrar', 'clerk'] },
+  { label: 'Profile', href: '/profile', roles: ['admin', 'judge', 'registrar', 'clerk'] },
+  { label: 'User Management', href: '/users', roles: ['admin'] },
+  { label: 'Register Case', href: '/register-case', roles: ['registrar'] },
+  { label: 'Case Review', href: '/case-review', roles: ['judge'] },
+  { label: 'Case Management', href: '/case-management', roles: ['judge', 'clerk'] },
+  { label: 'All Cases', href: '/cases', roles: ['admin', 'registrar', 'judge', 'clerk'] },
+  { label: 'Hearings', href: '/hearings', roles: ['judge', 'clerk'] },
+  { label: 'Settings', href: '/settings', roles: ['admin'] },
 ];
 
 interface DashboardSidebarProps {
@@ -29,6 +29,7 @@ interface DashboardSidebarProps {
 
 export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
+  const { settings } = useSettings();
   const location = useLocation();
 
   const filteredItems = navItems.filter(item => 
@@ -55,10 +56,10 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isOpen, onCl
           <div className="flex items-center justify-between h-16 px-6 border-b border-sidebar-border">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-sidebar-primary">
-                <Scale className="h-5 w-5 text-sidebar-primary-foreground" />
+                <div className="h-5 w-5 bg-sidebar-primary-foreground rounded" />
               </div>
               <div>
-                <h2 className="font-serif font-bold text-sm">East Gojjam</h2>
+                <h2 className="font-serif font-bold text-sm">{settings.courtName.split(' ')[0]} {settings.courtName.split(' ')[1]}</h2>
                 <p className="text-xs text-sidebar-foreground/70">High Court</p>
               </div>
             </div>
@@ -68,7 +69,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isOpen, onCl
               onClick={onClose}
               className="lg:hidden text-sidebar-foreground hover:bg-sidebar-accent"
             >
-              <X className="h-5 w-5" />
+              ×
             </Button>
           </div>
 
@@ -88,7 +89,6 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isOpen, onCl
                       : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
                   {item.label}
                 </NavLink>
               );
