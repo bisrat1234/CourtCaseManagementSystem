@@ -50,22 +50,26 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <SettingsProvider>
-      <CasesProvider>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter basename="/CourtCaseManagementSystem">
-              <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </CasesProvider>
-    </SettingsProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const basename = import.meta.env.MODE === 'production' ? '/CourtCaseManagementSystem' : '/';
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SettingsProvider>
+        <CasesProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter basename={basename}>
+                <AppRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+          </AuthProvider>
+        </CasesProvider>
+      </SettingsProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
