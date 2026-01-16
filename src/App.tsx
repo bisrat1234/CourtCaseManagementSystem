@@ -58,7 +58,7 @@ const App = () => (
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter>
+            <BrowserRouter basename="/CourtCaseManagementSystem">
               <AppRoutes />
             </BrowserRouter>
           </TooltipProvider>
